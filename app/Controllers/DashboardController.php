@@ -8,12 +8,15 @@ use App\Models\ReportePublisher;
 
 class DashboardController extends BaseController
 {
+
+  /* =============================
+   *   VISTAS (HTML)
+   * ============================= */
   public function getInforme1()
   {
     return view('dashboard/informe1');
   }
 
-  //Retorna una vista
   public function getInforme2()
   {
     return view('dashboard/informe2');
@@ -29,12 +32,15 @@ class DashboardController extends BaseController
     return view('dashboard/informe4');
   }
 
-  //Retorna el JSON que requiere la vista
+
+  /* =============================
+   *   API - INFORME 2 (Popularidad)
+   * ============================= */
   public function getDataInforme2()
   {
     $this->response->setContentType('application/json');
 
-    //Popularidad (consulta BD...)
+    // Simulación de datos (en un caso real vendrían de BD)
     $data = [
       ["superhero" => "Batman", "popularidad" => 20],
       ["superhero" => "Red Hood", "popularidad" => 100],
@@ -43,41 +49,42 @@ class DashboardController extends BaseController
       ["superhero" => "Linterna verde", "popularidad" => 10],
     ];
 
-    //En caso no encontramos datos..
     if (!$data) {
       return $this->response->setJSON([
         'success' => false,
-        'message' => 'No entramos superhero',
+        'message' => 'No encontramos superheroes',
         'resumen' => []
       ]);
     }
 
-    sleep(3);
-    //Datos encontramos, enviando JSON
+    // Simulación de demora en consulta
+    sleep(2);
+
     return $this->response->setJSON([
       'success' => true,
       'message' => 'Popularidad',
       'resumen' => $data
     ]);
-
   }
 
+
+  /* =============================
+   *   API - INFORME 3 (Alignment)
+   * ============================= */
   public function getDataInforme3()
   {
     $this->response->setContentType('application/json');
     $reporteAlignment = new ReporteAlignment();
     $data = $reporteAlignment->findAll();
 
-    //En caso no encontramos datos..
     if (!$data) {
       return $this->response->setJSON([
         'success' => false,
-        'message' => 'No entramos superhero',
+        'message' => 'No encontramos superheroes',
         'resumen' => []
       ]);
     }
 
-    //Datos encontramos, enviando JSON
     return $this->response->setJSON([
       'success' => true,
       'message' => 'Alineaciones',
@@ -86,22 +93,23 @@ class DashboardController extends BaseController
   }
 
 
+  /* =============================
+   *   API - INFORME 4 (Gender)
+   * ============================= */
   public function getDataInforme4()
   {
     $this->response->setContentType('application/json');
     $reporteGender = new ReporteGender();
     $data = $reporteGender->findAll();
 
-    //En caso no encontramos datos..
     if (!$data) {
       return $this->response->setJSON([
         'success' => false,
-        'message' => 'No entramos superhero',
+        'message' => 'No encontramos superheroes',
         'resumen' => []
       ]);
     }
 
-    //Datos encontramos, enviando JSON
     return $this->response->setJSON([
       'success' => true,
       'message' => 'Gender',
@@ -110,34 +118,29 @@ class DashboardController extends BaseController
   }
 
 
+  /* =============================
+   *   CACHE - INFORME 3 (Alignment)
+   * ============================= */
   public function getDataInforme3Cache()
   {
     $this->response->setContentType('application/json');
-
-    //Clave unica = identificador al conjunto de datos
     $cacheKey = 'resumenAlignment';
 
-    //Obtener losa dotos de la memoria cache
     $data = cache($cacheKey);
-
     if ($data == null) {
       $reporteAlignment = new ReporteAlignment();
       $data = $reporteAlignment->findAll();
-
       cache()->save($cacheKey, $data, 3600);
     }
 
-
-    //En caso no encontramos datos..
     if (!$data) {
       return $this->response->setJSON([
         'success' => false,
-        'message' => 'No entramos superhero',
+        'message' => 'No encontramos superheroes',
         'resumen' => []
       ]);
     }
 
-    //Datos encontramos, enviando JSON
     return $this->response->setJSON([
       'success' => true,
       'message' => 'Alineaciones',
@@ -146,54 +149,49 @@ class DashboardController extends BaseController
   }
 
 
+  /* =============================
+   *   CACHE - INFORME 4 (Gender)
+   * ============================= */
   public function getDataInforme4Cache()
   {
     $this->response->setContentType('application/json');
-
-    //Clave unica = identificador al conjunto de datos
     $cacheKey = 'resumenGender';
 
-    //Obtener losa dotos de la memoria cache
     $data = cache($cacheKey);
-
     if ($data == null) {
       $reporteGender = new ReporteGender();
       $data = $reporteGender->findAll();
-
       cache()->save($cacheKey, $data, 3600);
     }
 
-
-    //En caso no encontramos datos..
     if (!$data) {
       return $this->response->setJSON([
         'success' => false,
-        'message' => 'No entramos superhero',
+        'message' => 'No encontramos superheroes',
         'resumen' => []
       ]);
     }
 
-    //Datos encontramos, enviando JSON
     return $this->response->setJSON([
       'success' => true,
-      'message' => 'Alineaciones',
+      'message' => 'Gender',
       'resumen' => $data
     ]);
   }
 
+
+  /* =============================
+   *   CACHE - INFORME 4 (Publishers)
+   * ============================= */
   public function getDataInformePublisherCache()
   {
     $this->response->setContentType('application/json');
-
     $cacheKey = 'resumenPublisher';
 
     $data = cache($cacheKey);
-
     if ($data == null) {
       $reportePublisher = new ReportePublisher();
-      $data = $reportePublisher->getResumenPublisher();
-  // O un método personalizado que hagas
-
+      $data = $reportePublisher->getResumenPublisher(); // Método personalizado en el modelo
       cache()->save($cacheKey, $data, 3600);
     }
 
@@ -211,6 +209,5 @@ class DashboardController extends BaseController
       'resumen' => $data
     ]);
   }
-
 
 }

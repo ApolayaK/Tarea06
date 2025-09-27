@@ -14,10 +14,16 @@
 
 <body>
   <div class="container">
-    <button class="btn btn-outline-primary my-4" id="obtener-datos" type="button">
-      Obtener datos
-    </button>
+    <h2 class="my-4">Informe 4 - Superhéroes</h2>
+    <button class="btn btn-outline-primary mb-4" id="obtener-datos">Cargar Datos</button>
+
+    <!-- Gráfico 1: por género -->
+    <h4>Superhéroes por Género</h4>
     <canvas id="lienzo"></canvas>
+
+    <!-- Gráfico 2: por publisher -->
+    <h4 class="mt-4">Superhéroes por Publisher</h4>
+    <canvas id="lienzo2"></canvas>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js"></script>
@@ -30,105 +36,64 @@
       let grafico = null;
       let grafico2 = null;
 
+      // Inicialización de gráficos vacíos
       function renderGraphic() {
+        // Gráfico 1 - Pastel (Gender)
         grafico = new Chart(lienzo, {
           type: 'pie',
-          data: {
-            labels: [],
-            datasets: [
-              {
-                label: '',
-                data: [],
-                backgroundColor: [
-                  'rgba(255, 99, 132, 0.7)',  // Rojo rosado
-                  'rgba(54, 162, 235, 0.7)',  // Azul
-                  'rgba(255, 206, 86, 0.7)'   // Amarillo
-                ],
-                borderColor: 'white',
-                borderWidth: 2,
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              legend: {
-                display: true,
-                position: 'top'
-              }
-            }
-          }
+          data: { labels: [], datasets: [{ label: '', data: [], backgroundColor: ['rgba(255,99,132,0.7)','rgba(54,162,235,0.7)','rgba(255,206,86,0.7)'], borderColor:'white', borderWidth:2 }] },
+          options: { responsive:true, plugins:{ legend:{ position:'top' } } }
         });
 
+        // Gráfico 2 - Barras (Publisher)
         grafico2 = new Chart(lienzo2, {
-          type: 'pie',
-          data: {
-            labels: [],
-            datasets: [
-              {
-                label: '',
-                data: [],
-                backgroundColor: [
-                  'rgba(255, 99, 132, 0.7)',  // id = 4
-                  'rgba(54, 162, 235, 0.7)',  // id = 13
-                  'rgba(255, 206, 86, 0.7)',  // id = 3
-                  'rgba(155, 89, 182, 0.7)',  // id = 5
-                  'rgba(149, 165, 166,0.7)'   // id = 10
-                ],
-                borderColor: 'white',
-                borderWidth: 2,
-              }
-            ]
-          },
+          type: 'bar',
+          data: { labels: [], datasets: [{ label: 'Cantidad de Superhéroes', data: [], backgroundColor:['rgba(255,99,132,0.7)','rgba(54,162,235,0.7)','rgba(255,206,86,0.7)','rgba(155,89,182,0.7)','rgba(149,165,166,0.7)'], borderColor:'white', borderWidth:2 }] },
           options: {
             responsive: true,
-            plugins: {
-              legend: {
-                display: true,
-                position: 'top'
-              }
+            plugins: { 
+              legend: { display: false },
+              title: { display: true, text: 'Cantidad de Superhéroes por Publisher' }
+            },
+            scales: {
+              y: { beginAtZero:true, title:{ display:true, text:'Total de Superhéroes' } },
+              x: { title:{ display:true, text:'Publisher' } }
             }
           }
         });
-
-
       }
 
       btnDatos.addEventListener("click", async () => {
         try {
-          // Fetch para género
-          const responseGender = await fetch('<?= base_url() ?>/public/api/getdatainforme4cache', { method: 'GET' });
-          if (!responseGender.ok) throw new Error('No se pudo conectar al servicio de género');
+          // Fetch para Gender
+          const responseGender = await fetch('<?= base_url() ?>/public/api/getdatainforme4cache');
           const dataGender = await responseGender.json();
 
-          // Fetch para publishers
-          const responsePublisher = await fetch('<?= base_url() ?>/public/api/getdatainformepublishercache', { method: 'GET' });
-          if (!responsePublisher.ok) throw new Error('No se pudo conectar al servicio de publishers');
+          // Fetch para Publisher
+          const responsePublisher = await fetch('<?= base_url() ?>/public/api/getdatainformepublishercache');
           const dataPublisher = await responsePublisher.json();
 
+          // Actualizar gráfico 1
           if (dataGender.success) {
-            grafico.data.labels = dataGender.resumen.map(row => row.gender);
-            grafico.data.datasets[0].data = dataGender.resumen.map(row => row.total);
-            grafico.data.datasets[0].label = dataGender.message;
+            grafico.data.labels = dataGender.resumen.map(r => r.gender);
+            grafico.data.datasets[0].data = dataGender.resumen.map(r => r.total);
             grafico.update();
           }
 
+          // Actualizar gráfico 2
           if (dataPublisher.success) {
-            grafico2.data.labels = dataPublisher.resumen.map(row => row.publisher);
-            grafico2.data.datasets[0].data = dataPublisher.resumen.map(row => row.total);
-            grafico2.data.datasets[0].label = dataPublisher.message;
+            grafico2.data.labels = dataPublisher.resumen.map(r => r.publisher); // usar 'publisher' desde el modelo
+            grafico2.data.datasets[0].data = dataPublisher.resumen.map(r => r.total); // usar 'total' desde el modelo
             grafico2.update();
           }
 
         } catch (error) {
-          console.error(error);
+          console.error("Error al cargar los datos:", error);
         }
       });
-
 
       renderGraphic();
     });
   </script>
 </body>
-
 </html>
