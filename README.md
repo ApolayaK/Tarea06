@@ -1,68 +1,63 @@
-# CodeIgniter 4 Application Starter
+# 📊 Proyecto Superhéroes – Informe 4
 
-## What is CodeIgniter?
+Este proyecto implementa un sistema de análisis y visualización de datos sobre superhéroes.
+El trabajo se centra en la creación de gráficos estadísticos, reportes PDF y cálculos de métricas relevantes.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+---
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+## 📂 Informe 4
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+El informe está compuesto por dos gráficos principales:
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+### 🔹 Gráfico 1 – Distribución por Género
 
-## Installation & updates
+* **Fuente de datos**: Tabla `Gender`.
+* **Descripción**: Muestra cuántos superhéroes existen según su género.
+* **Salida**: Gráfico comparativo acompañado de una tabla resumen.
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+### 🔹 Gráfico 2 – Superhéroes por Editorial
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+* **Fuente de datos**: Tabla `Publisher_name`.
+* **Editoriales seleccionadas**: IDs `4, 13, 3, 5, 10`.
+* **Descripción**: Representa cuántos superhéroes pertenecen a cada editorial.
+* **Salida**: Gráfico de barras mostrando el conteo por editorial.
 
-## Setup
+---
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+## 🖥️ Funcionalidades del Proyecto
 
-## Important Change with index.php
+### Interfaz
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+* Selección de título de superhéroe.
+* Filtro por género.
+* Opción para limitar el número de resultados mostrados.
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+### Gráficos y Reportes
 
-**Please** read the user guide for a better explanation of how CI4 works!
+* **Gráfico dinámico**: Selección de editoriales mediante *checkbox*.
+* **Exportación**: Generación de reportes en formato PDF con soporte de caché.
 
-## Repository Management
+### Cálculos Avanzados
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+* **Promedio de peso por editorial**:
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+  * Cálculo del promedio de peso de todos los superhéroes agrupados por editorial (*publisher*).
+  * Ordenamiento de los resultados de menor a mayor.
+  * Visualización en un gráfico estadístico.
 
-## Server Requirements
+---
 
-PHP version 8.1 or higher is required, with the following extensions installed:
+## ⚙️ Tecnologías Utilizadas
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+* **Backend**: PHP con CodeIgniter
+* **Base de Datos**: MySQL
+* **Frontend**: HTML5, CSS3, JavaScript
+* **Visualización de datos**: Librerías gráficas (ej. Chart.js)
+* **Reportes**: Generación de PDFs
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
-> - The end of life date for PHP 8.1 will be December 31, 2025.
+---
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+## 📌 Conclusión
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+El proyecto combina **interfaz interactiva, análisis de base de datos y visualización gráfica** para ofrecer reportes claros y útiles sobre superhéroes.
+El énfasis está en la presentación profesional de la información y la optimización del flujo de reportes.
