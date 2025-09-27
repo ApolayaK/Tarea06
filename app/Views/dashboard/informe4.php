@@ -41,29 +41,30 @@
         // Gráfico 1 - Pastel (Gender)
         grafico = new Chart(lienzo, {
           type: 'pie',
-          data: { labels: [], datasets: [{ label: '', data: [], backgroundColor: ['rgba(255,99,132,0.7)','rgba(54,162,235,0.7)','rgba(255,206,86,0.7)'], borderColor:'white', borderWidth:2 }] },
-          options: { responsive:true, plugins:{ legend:{ position:'top' } } }
+          data: { labels: [], datasets: [{ label: '', data: [], backgroundColor: ['rgba(255,99,132,0.7)', 'rgba(54,162,235,0.7)', 'rgba(255,206,86,0.7)'], borderColor: 'white', borderWidth: 2 }] },
+          options: { responsive: true, plugins: { legend: { position: 'top' } } }
         });
 
         // Gráfico 2 - Barras (Publisher)
         grafico2 = new Chart(lienzo2, {
           type: 'bar',
-          data: { labels: [], datasets: [{ label: 'Cantidad de Superhéroes', data: [], backgroundColor:['rgba(255,99,132,0.7)','rgba(54,162,235,0.7)','rgba(255,206,86,0.7)','rgba(155,89,182,0.7)','rgba(149,165,166,0.7)'], borderColor:'white', borderWidth:2 }] },
+          data: { labels: [], datasets: [{ label: 'Cantidad de Superhéroes', data: [], backgroundColor: ['rgba(255,99,132,0.7)', 'rgba(54,162,235,0.7)', 'rgba(255,206,86,0.7)', 'rgba(155,89,182,0.7)', 'rgba(149,165,166,0.7)'], borderColor: 'white', borderWidth: 2 }] },
           options: {
             responsive: true,
-            plugins: { 
+            plugins: {
               legend: { display: false },
               title: { display: true, text: 'Cantidad de Superhéroes por Publisher' }
             },
             scales: {
-              y: { beginAtZero:true, title:{ display:true, text:'Total de Superhéroes' } },
-              x: { title:{ display:true, text:'Publisher' } }
+              y: { beginAtZero: true, title: { display: true, text: 'Total de Superhéroes' } },
+              x: { title: { display: true, text: 'Publisher' } }
             }
           }
         });
       }
 
-      btnDatos.addEventListener("click", async () => {
+      // Función que carga los datos y actualiza ambos gráficos
+      async function cargarDatos() {
         try {
           // Fetch para Gender
           const responseGender = await fetch('<?= base_url() ?>/public/api/getdatainforme4cache');
@@ -82,18 +83,26 @@
 
           // Actualizar gráfico 2
           if (dataPublisher.success) {
-            grafico2.data.labels = dataPublisher.resumen.map(r => r.publisher); // usar 'publisher' desde el modelo
-            grafico2.data.datasets[0].data = dataPublisher.resumen.map(r => r.total); // usar 'total' desde el modelo
+            grafico2.data.labels = dataPublisher.resumen.map(r => r.publisher);
+            grafico2.data.datasets[0].data = dataPublisher.resumen.map(r => r.total);
             grafico2.update();
           }
 
         } catch (error) {
           console.error("Error al cargar los datos:", error);
         }
-      });
+      }
 
       renderGraphic();
+
+      // Cargar datos automáticamente al abrir la página
+      cargarDatos();
+
+      // Botón para recargar manualmente si se desea
+      btnDatos.addEventListener("click", cargarDatos);
     });
   </script>
+
 </body>
+
 </html>
