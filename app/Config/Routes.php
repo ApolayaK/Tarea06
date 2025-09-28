@@ -51,3 +51,9 @@ $routes->get('/public/api/getdatainforme4', 'DashboardController::getDataInforme
 $routes->get('/public/api/getdatainforme3cache', 'DashboardController::getDataInforme3Cache'); // Alignment
 $routes->get('/public/api/getdatainforme4cache', 'DashboardController::getDataInforme4Cache'); // Gender
 $routes->get('/public/api/getdatainformepublishercache', 'DashboardController::getDataInformePublisherCache'); // Publisher (IMPORTANTE: gráfico 2)
+
+// ------------------------------
+// TAREA 06
+// ------------------------------
+$routes->get('/tarea06/interfaz', 'Tarea06Controller::interfaz');         // Interfaz
+$routes->post('/tarea06/exportPDF', 'Tarea06Controller::exportPDF');      // Exportar PDF

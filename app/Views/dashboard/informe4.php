@@ -4,105 +4,226 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Informe 4</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-    crossorigin="anonymous"></script>
+  <title>Informe 4 - Superhéroes</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js"></script>
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: "Segoe UI", Roboto, sans-serif;
+    }
+
+    .header-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .header-section h1 {
+      margin: 0;
+      font-weight: 700;
+      font-size: 2.5rem;
+      color: #343a40;
+    }
+
+    .header-section button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1rem;
+    }
+
+    .chart-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      align-items: flex-start;
+      margin-bottom: 40px;
+    }
+
+    .chart-box {
+      flex: 1 1 300px;
+      max-width: 500px;
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    canvas {
+      max-width: 100%;
+      height: 300px;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 10px;
+      border-collapse: collapse;
+      transition: all 0.5s ease-in-out;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    table.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    table th,
+    table td {
+      padding: 8px 12px;
+      text-align: center;
+    }
+  </style>
 </head>
 
 <body>
   <div class="container">
-    <h2 class="my-4">Informe 4 - Superhéroes</h2>
-    <button class="btn btn-outline-primary mb-4" id="obtener-datos">Cargar Datos</button>
+    <div class="header-section">
+      <h1>Informe 4 - Superhéroes</h1>
+      <button class="btn btn-primary" id="obtener-datos">Cargar Datos</button>
+    </div>
 
-    <!-- Gráfico 1: por género -->
-    <h4>Superhéroes por Género</h4>
-    <canvas id="lienzo"></canvas>
+    <!-- Gráfico y tabla Gender -->
+    <div class="chart-container">
+      <div class="chart-box">
+        <h5 class="text-center">Superhéroes por Género</h5>
+        <canvas id="lienzo"></canvas>
+      </div>
+      <div class="chart-box">
+        <table class="table table-bordered table-striped" id="tabla-gender">
+          <thead class="table-light">
+            <tr>
+              <th>Género</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
 
-    <!-- Gráfico 2: por publisher -->
-    <h4 class="mt-4">Superhéroes por Publisher</h4>
-    <canvas id="lienzo2"></canvas>
+    <!-- Gráfico y tabla Publisher -->
+    <div class="chart-container">
+      <div class="chart-box">
+        <h5 class="text-center">Superhéroes por Publisher</h5>
+        <canvas id="lienzo2"></canvas>
+      </div>
+      <div class="chart-box">
+        <table class="table table-bordered table-striped" id="tabla-publisher">
+          <thead class="table-light">
+            <tr>
+              <th>Publisher</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
   </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js"></script>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const lienzo = document.getElementById("lienzo");
       const lienzo2 = document.getElementById("lienzo2");
       const btnDatos = document.getElementById("obtener-datos");
+      const tablaGender = document.getElementById("tabla-gender");
+      const tablaPublisher = document.getElementById("tabla-publisher");
+
       let grafico = null;
       let grafico2 = null;
 
-      // Inicialización de gráficos vacíos
       function renderGraphic() {
-        // Gráfico 1 - Pastel (Gender)
+        // Destruir gráficos anteriores si existen
+        if (grafico) grafico.destroy();
+        if (grafico2) grafico2.destroy();
+
+        // Gráfico 1 - Pie suave (Gender)
         grafico = new Chart(lienzo, {
           type: 'pie',
-          data: { labels: [], datasets: [{ label: '', data: [], backgroundColor: ['rgba(255,99,132,0.7)', 'rgba(54,162,235,0.7)', 'rgba(255,206,86,0.7)'], borderColor: 'white', borderWidth: 2 }] },
-          options: { responsive: true, plugins: { legend: { position: 'top' } } }
-        });
-
-        // Gráfico 2 - Barras (Publisher)
-        grafico2 = new Chart(lienzo2, {
-          type: 'bar',
-          data: { labels: [], datasets: [{ label: 'Cantidad de Superhéroes', data: [], backgroundColor: ['rgba(255,99,132,0.7)', 'rgba(54,162,235,0.7)', 'rgba(255,206,86,0.7)', 'rgba(155,89,182,0.7)', 'rgba(149,165,166,0.7)'], borderColor: 'white', borderWidth: 2 }] },
+          data: {
+            labels: [],
+            datasets: [{
+              data: [],
+              backgroundColor: ['#6c757d', '#17a2b8', '#ffc107', '#28a745', '#fd7e14'],
+              borderColor: '#fff',
+              borderWidth: 2
+            }]
+          },
           options: {
             responsive: true,
-            plugins: {
-              legend: { display: false },
-              title: { display: true, text: 'Cantidad de Superhéroes por Publisher' }
-            },
+            plugins: { legend: { position: 'top' }, tooltip: { enabled: true } }
+          }
+        });
+
+        // Gráfico 2 - Horizontal (Publisher)
+        grafico2 = new Chart(lienzo2, {
+          type: 'bar',
+          data: { labels: [], datasets: [{ label: 'Cantidad de Superhéroes', data: [], backgroundColor: ['#6c757d', '#17a2b8', '#ffc107', '#28a745', '#fd7e14'], borderColor: '#fff', borderWidth: 2 }] },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            plugins: { legend: { display: false }, title: { display: true, text: 'Cantidad de Superhéroes por Publisher' } },
             scales: {
-              y: { beginAtZero: true, title: { display: true, text: 'Total de Superhéroes' } },
-              x: { title: { display: true, text: 'Publisher' } }
+              x: { beginAtZero: true, title: { display: true, text: 'Total de Superhéroes' } },
+              y: { title: { display: true, text: 'Publisher' } }
             }
           }
         });
       }
 
-      // Función que carga los datos y actualiza ambos gráficos
       async function cargarDatos() {
         try {
-          // Fetch para Gender
+          renderGraphic(); // reinicia los gráficos cada vez que se carga
+
           const responseGender = await fetch('<?= base_url() ?>/public/api/getdatainforme4cache');
           const dataGender = await responseGender.json();
 
-          // Fetch para Publisher
           const responsePublisher = await fetch('<?= base_url() ?>/public/api/getdatainformepublishercache');
           const dataPublisher = await responsePublisher.json();
 
-          // Actualizar gráfico 1
+          // Pie (Gender)
           if (dataGender.success) {
             grafico.data.labels = dataGender.resumen.map(r => r.gender);
             grafico.data.datasets[0].data = dataGender.resumen.map(r => r.total);
             grafico.update();
+
+            const tbody = tablaGender.querySelector("tbody");
+            tbody.innerHTML = "";
+            dataGender.resumen.forEach(r => {
+              tbody.innerHTML += `<tr><td>${r.gender}</td><td>${r.total}</td></tr>`;
+            });
+            tablaGender.classList.add("show");
           }
 
-          // Actualizar gráfico 2
+          // Horizontal Bar (Publisher)
           if (dataPublisher.success) {
             grafico2.data.labels = dataPublisher.resumen.map(r => r.publisher);
             grafico2.data.datasets[0].data = dataPublisher.resumen.map(r => r.total);
             grafico2.update();
-          }
 
+            const tbody = tablaPublisher.querySelector("tbody");
+            tbody.innerHTML = "";
+            dataPublisher.resumen.forEach(r => {
+              tbody.innerHTML += `<tr><td>${r.publisher}</td><td>${r.total}</td></tr>`;
+            });
+            tablaPublisher.classList.add("show");
+          }
         } catch (error) {
           console.error("Error al cargar los datos:", error);
         }
       }
 
-      renderGraphic();
-
-      // Cargar datos automáticamente al abrir la página
-      cargarDatos();
-
-      // Botón para recargar manualmente si se desea
-      btnDatos.addEventListener("click", cargarDatos);
+      cargarDatos(); // carga automática al abrir
+      btnDatos.addEventListener("click", cargarDatos); // refresca al presionar
     });
   </script>
-
 </body>
 
 </html>
