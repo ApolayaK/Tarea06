@@ -55,5 +55,7 @@ $routes->get('/public/api/getdatainformepublishercache', 'DashboardController::g
 // ------------------------------
 // TAREA 06
 // ------------------------------
-$routes->get('/tarea06/interfaz', 'Tarea06Controller::interfaz');         // Interfaz
-$routes->post('/tarea06/exportPDF', 'Tarea06Controller::exportPDF');      // Exportar PDF
+$routes->get('/tarea06/interfaz','Tarea06Controller::interfaz');
+$routes->post('/tarea06/exportPDF','Tarea06Controller::exportPDF');
+
+
