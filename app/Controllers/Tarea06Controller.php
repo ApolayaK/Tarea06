@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\tarea06\SuperheroModel;
+use App\Models\Tarea06\EditorialModel;
 use App\Models\tarea06\GenderModel;
 use Spipu\Html2Pdf\Html2Pdf;
 use Spipu\Html2Pdf\Exception\Html2PdfException;
@@ -16,6 +17,11 @@ class Tarea06Controller extends BaseController
         $genderModel = new GenderModel();
         $data['genders'] = $genderModel->findAll();
         return view('tarea06/interfaz', $data);
+    }
+
+    public function interfaz2()
+    {
+        return view('tarea06/interfaz2');
     }
 
     public function exportPDF()
@@ -73,4 +79,49 @@ class Tarea06Controller extends BaseController
             echo $formatter->getHtmlMessage();
         }
     }
+
+    public function getEditoriales()
+    {
+        $model = new EditorialModel();
+        return $this->response->setJSON($model->getEditoriales());
+    }
+
+    public function getEditorialData()
+    {
+        $ids = $this->request->getPost('editorial_ids') ?? [];
+        $model = new EditorialModel();
+        $data = $model->getData($ids);
+
+        return $this->response->setJSON([
+            'success' => true,
+            'resumen' => $data
+        ]);
+    }
+
+    public function exportPDFEditorial()
+    {
+        $ids = $this->request->getPost('editorial_ids') ?? [];
+        $model = new EditorialModel();
+
+        // Obtener los héroes de las editoriales seleccionadas
+        $superheroes = $model->getSuperheroesByEditorials($ids);
+
+        try {
+            $html = view('tarea06/resultados2_pdf', [
+                'titulo' => 'Reporte Editorial',
+                'superheroes' => $superheroes
+            ]);
+
+            $html2pdf = new Html2Pdf('L', 'A4', 'es');
+            $html2pdf->writeHTML($html);
+            $this->response->setHeader('Content-Type', 'application/pdf');
+            $html2pdf->output('Reporte-Editorial.pdf');
+            exit();
+        } catch (Html2PdfException $e) {
+            echo $e->getMessage();
+        }
+    }
+
+
+
 }
